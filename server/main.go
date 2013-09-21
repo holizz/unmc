@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 )
 
+//  STRUCTS  /////////////////////////////////////////////////////////////////
+
 type Item struct {
 	Id int
 	Path string
@@ -16,37 +18,81 @@ type Item struct {
 type Status struct {
 	Status string
 	List []Item
+	Id int
 }
 
-func handleRoot(w http.ResponseWriter, r *http.Request) {
-	status := Status{
-		Status: "ok",
+//  VARS  ////////////////////////////////////////////////////////////////////
+
+var items []Item
+
+//  PRIVATE FUNCS  ///////////////////////////////////////////////////////////
+
+func respond(w http.ResponseWriter, status string, list []Item, id int) {
+	data := Status{
+		Status: status,
+		List: list,
+		Id: id,
 	}
-	data, err := json.Marshal(status)
+	json, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
 	}
-	w.Write(data)
+	w.Write(json)
+}
+
+func respondOK(w http.ResponseWriter) {
+	respond(w, "ok", nil, 0)
+}
+
+func addItem(path string) (id int) {
+	id = 1
+	items = append(items, Item{Id: id, Path: path})
+	return
+}
+
+//  HANDLE  //////////////////////////////////////////////////////////////////
+
+func handleRoot(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		panic(true)
+	}
+	respondOK(w)
 }
 
 func handleList(w http.ResponseWriter, r *http.Request) {
-	status := Status{
-		Status: "ok",
-		List: []Item{},
+	if r.Method != "GET" {
+		panic(true)
 	}
-	data, err := json.Marshal(status)
-	if err != nil {
-		panic(err)
-	}
-	w.Write(data)
+	respond(w, "ok", items, 0)
 }
+
+func handleNew(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "PUT" {
+		panic(true)
+	}
+
+	path := r.FormValue("path")
+	fmt.Printf("Path: \"%s\"\n", path)
+
+	id := addItem(path)
+	respond(w, "ok", nil, id)
+}
+
+//  INITIALIZATION  //////////////////////////////////////////////////////////
 
 func createMux() (mux *http.ServeMux) {
 	mux = http.NewServeMux()
 	mux.HandleFunc("/", handleRoot)
 	mux.HandleFunc("/tracks", handleList)
+	mux.HandleFunc("/tracks/new", handleNew)
 	return
 }
+
+func initialize() {
+	items = []Item{}
+}
+
+//  MAIN  ////////////////////////////////////////////////////////////////////
 
 func main() {
 	if len(os.Args) != 2 {
@@ -60,6 +106,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	initialize()
 	mux := createMux()
 
 	http.Handle("/", mux)

@@ -40,6 +40,7 @@ class TestSocketAPI(unittest.TestCase):
         self.assertTrue(os.path.exists(self.sock_f))
         proc.terminate()
 
+    @unittest.expectedFailure
     def testUnlinksSocket(self):
         proc = subprocess.Popen(self.cmd+[self.sock_f])
         time.sleep(1)

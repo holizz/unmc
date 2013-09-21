@@ -44,6 +44,10 @@ func respondOK(w http.ResponseWriter) {
 	respond(w, "ok", nil, 0)
 }
 
+func respondFail(w http.ResponseWriter) {
+	respond(w, "fail", nil, 0)
+}
+
 func addItem(path string) (id int) {
 	id = 1
 	items = append(items, Item{Id: id, Path: path})
@@ -54,26 +58,34 @@ func addItem(path string) (id int) {
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
-		panic(true)
+		w.WriteHeader(http.StatusNotImplemented)
+		respondFail(w)
+		return
 	}
 	respondOK(w)
 }
 
 func handleList(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
-		panic(true)
+		w.WriteHeader(http.StatusNotImplemented)
+		respondFail(w)
+		return
 	}
 	respond(w, "ok", items, 0)
 }
 
 func handleNew(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "PUT" {
-		panic(true)
+		w.WriteHeader(http.StatusNotImplemented)
+		respondFail(w)
+		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		respondFail(w)
+		return
 	}
 	path := r.PostFormValue("path")
 
@@ -116,6 +128,7 @@ func main() {
 
 	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
-		panic(err)
+		fmt.Printf("Could not listen on port %d\n", port)
+		os.Exit(1)
 	}
 }

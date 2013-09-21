@@ -22,10 +22,6 @@ func request(handler func(http.ResponseWriter, *http.Request), method string, pa
 func assertOK(t *testing.T, record *httptest.ResponseRecorder) {
 	assert.Equal(t, record.Code, http.StatusOK)
 
-	type Status struct {
-		Status string
-	}
-
 	var status Status
 	err := json.Unmarshal(record.Body.Bytes(), &status)
 	assert.Nil(t, err)
@@ -35,4 +31,14 @@ func assertOK(t *testing.T, record *httptest.ResponseRecorder) {
 func TestRoot(t *testing.T) {
 	record := request(handleRoot, "GET", "/")
 	assertOK(t, record)
+}
+
+func TestList(t *testing.T) {
+	record := request(handleList, "GET", "/tracks")
+	assertOK(t, record)
+
+	var status Status
+	err := json.Unmarshal(record.Body.Bytes(), &status)
+	assert.Nil(t, err)
+	assert.Equal(t, status.List, []Item{})
 }

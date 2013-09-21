@@ -8,12 +8,31 @@ import (
 	"encoding/json"
 )
 
+type Item struct {
+	Id int
+	Path string
+}
+
+type Status struct {
+	Status string
+	List []Item
+}
+
 func handleRoot(w http.ResponseWriter, r *http.Request) {
-	type Status struct {
-		Status string
-	}
 	status := Status{
 		Status: "ok",
+	}
+	data, err := json.Marshal(status)
+	if err != nil {
+		panic(err)
+	}
+	w.Write(data)
+}
+
+func handleList(w http.ResponseWriter, r *http.Request) {
+	status := Status{
+		Status: "ok",
+		List: []Item{},
 	}
 	data, err := json.Marshal(status)
 	if err != nil {

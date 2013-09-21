@@ -71,8 +71,11 @@ func handleNew(w http.ResponseWriter, r *http.Request) {
 		panic(true)
 	}
 
-	path := r.FormValue("path")
-	fmt.Printf("Path: \"%s\"\n", path)
+	err := r.ParseForm()
+	if err != nil {
+		panic(err)
+	}
+	path := r.PostFormValue("path")
 
 	id := addItem(path)
 	respond(w, "ok", nil, id)

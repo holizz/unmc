@@ -24,6 +24,11 @@ func request(t *testing.T, handler http.Handler, method string, path string, bod
 
 	record = httptest.NewRecorder()
 	req, err := http.NewRequest(method, path, bodyReader)
+
+	if body != "" {
+		req.Header.Set("Content-Type", "application/x-www-form-encoded")
+	}
+
 	assert.Nil(t, err)
 	handler.ServeHTTP(record, req)
 	return

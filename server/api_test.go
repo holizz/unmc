@@ -9,13 +9,13 @@ import (
 	"encoding/json"
 )
 
-func request(handler func(http.ResponseWriter, *http.Request), method string, path string) (record *httptest.ResponseRecorder) {
+func request(handler http.Handler, method string, path string) (record *httptest.ResponseRecorder) {
 	record = httptest.NewRecorder()
 	req := &http.Request{
 		Method: method,
 		URL: &url.URL{Path: path},
 	}
-	handler(record, req)
+	handler.ServeHTTP(record, req)
 	return
 }
 
@@ -29,12 +29,14 @@ func assertOK(t *testing.T, record *httptest.ResponseRecorder) {
 }
 
 func TestRoot(t *testing.T) {
-	record := request(handleRoot, "GET", "/")
+	mux := createMux()
+	record := request(mux, "GET", "/")
 	assertOK(t, record)
 }
 
 func TestList(t *testing.T) {
-	record := request(handleList, "GET", "/tracks")
+	mux := createMux()
+	record := request(mux, "GET", "/tracks")
 	assertOK(t, record)
 
 	var status Status

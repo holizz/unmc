@@ -41,6 +41,13 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+func createMux() (mux *http.ServeMux) {
+	mux = http.NewServeMux()
+	mux.HandleFunc("/", handleRoot)
+	mux.HandleFunc("/tracks", handleList)
+	return
+}
+
 func main() {
 	if len(os.Args) != 2 {
 		fmt.Printf("Usage: %s port\n", os.Args[0])
@@ -53,7 +60,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	http.HandleFunc("/", handleRoot)
+	mux := createMux()
+
+	http.Handle("/", mux)
 
 	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {

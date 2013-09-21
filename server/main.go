@@ -3,50 +3,41 @@ package main
 import (
 	"os"
 	"fmt"
-	"net"
-	"io"
+	"net/http"
+	"strconv"
+	"encoding/json"
 )
 
+func handleRoot(w http.ResponseWriter, r *http.Request) {
+	type Status struct {
+		Status string
+	}
+	status := Status{
+		Status: "ok",
+	}
+	data, err := json.Marshal(status)
+	if err != nil {
+		panic(err)
+	}
+	w.Write(data)
+}
+
 func main() {
-	if (len(os.Args) != 2) {
-		fmt.Printf("Usage: %s path/to/socket\n", os.Args[0])
+	if len(os.Args) != 2 {
+		fmt.Printf("Usage: %s port\n", os.Args[0])
 		os.Exit(1)
 	}
 
-	ln, err := net.Listen("unix", os.Args[1])
+	port, err := strconv.Atoi(os.Args[1])
+	if err != nil || port < 1 {
+		fmt.Printf("Port must be a positive integer\n", os.Args[0])
+		os.Exit(1)
+	}
+
+	http.HandleFunc("/", handleRoot)
+
+	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
 		panic(err)
-	}
-	defer unlinkSocket(os.Args[1])
-
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			continue
-		}
-
-		go handleConnection(conn)
-	}
-}
-
-func unlinkSocket(path string) {
-	err := os.Remove(path)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func handleConnection(conn net.Conn) {
-	var input []byte
-
-	for {
-		n, err := conn.Read(input)
-		if err == io.EOF {
-			fmt.Printf("EOF: %d\n", n)
-		} else if err != nil {
-			panic(err)
-		} else {
-			fmt.Printf("%d\n", n)
-		}
 	}
 }

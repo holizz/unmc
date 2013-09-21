@@ -33,11 +33,12 @@ func respond(w http.ResponseWriter, status string, list []Item, id int) {
 		List: list,
 		Id: id,
 	}
-	json, err := json.Marshal(data)
+	encoder := json.NewEncoder(w)
+	err := encoder.Encode(data)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
-	w.Write(json)
 }
 
 func respondOK(w http.ResponseWriter) {

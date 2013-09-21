@@ -4,6 +4,7 @@ import (
 	"os"
 	"fmt"
 	"net"
+	"io"
 )
 
 func main() {
@@ -36,5 +37,16 @@ func unlinkSocket(path string) {
 }
 
 func handleConnection(conn net.Conn) {
-	fmt.Println("hi there")
+	var input []byte
+
+	for {
+		n, err := conn.Read(input)
+		if err == io.EOF {
+			fmt.Printf("EOF: %d\n", n)
+		} else if err != nil {
+			panic(err)
+		} else {
+			fmt.Printf("%d\n", n)
+		}
+	}
 }

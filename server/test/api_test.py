@@ -1,18 +1,15 @@
-import unittest
-import subprocess
-import socket
+import json
 import os
+import socket
+import subprocess
 import time
+import unittest
 
 class TestSocketAPI(unittest.TestCase):
     cmd = ['./main']
     sock_f = 'sock'
 
-    def _unlink(self):
-        try:
-            os.unlink(self.sock_f)
-        except FileNotFoundError:
-            pass
+    ##  TIDY THINGS UP  ######################################################
 
     def setUp(self):
         self._unlink()
@@ -20,12 +17,23 @@ class TestSocketAPI(unittest.TestCase):
     def tearDown(self):
         self._unlink()
 
-    # def createSocket(self):
-    #     self.proc = subprocess.Popen(['./unmc-server', self.sock_f])
-    #     self.assertTrue(os.path.exists(self.sock_f))
+    ##  PRIVATE METHODS  #####################################################
 
-    #     self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    #     self.socket.connect(self.sock_f)
+    def _unlink(self):
+        try:
+            os.unlink(self.sock_f)
+        except FileNotFoundError:
+            pass
+
+    def _createSocket(self):
+        self.proc = subprocess.Popen(self.cmd+[self.sock_f])
+        time.sleep(1)
+        self.assertTrue(os.path.exists(self.sock_f))
+
+        self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.socket.connect(self.sock_f)
+
+    ##  TESTS  ###############################################################
 
     def testBadCall(self):
         with self.assertRaises(subprocess.CalledProcessError) as exc:
@@ -53,11 +61,12 @@ class TestSocketAPI(unittest.TestCase):
         self.assertIs(proc.poll(), None)
         proc.terminate()
 
-    # def testVersion(self):
-    #     self.createSocket()
-    #     self.socket.send('VERSION')
-    #     data = self.socket.recv(1024)
-    #     print(data)
+    def testVersion(self):
+        self._createSocket()
+        _input = json.dumps({'action':'version'})
+        self.socket.send(_input.encode('UTF-8'))
+        data = self.socket.recv(1024)
+        print(data)
 
 if __name__ == '__main__':
     unittest.main()

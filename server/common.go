@@ -17,17 +17,24 @@ type Status struct {
 	Id int
 }
 
+const (
+	StateStopped = iota
+	StatePlaying
+)
+
 //  VARS  ////////////////////////////////////////////////////////////////////
 
 var items []Item
-var next_id int
+var nextId int
+var currentTrack int
+var currentState int
 
 //  HELPER FUNCTIONS  ////////////////////////////////////////////////////////
 
 func addItem(path string) (id int) {
-	id = next_id
-	items = append(items, Item{Id: next_id, Path: path})
-	next_id = next_id + 1
+	id = nextId
+	items = append(items, Item{Id: nextId, Path: path})
+	nextId = nextId + 1
 	return
 }
 
@@ -48,4 +55,11 @@ func removeItem(id int) (err error) {
 	}
 	items = append(items[:i], items[i+1:]...)
 	return
+}
+
+func initialize() {
+	items = []Item{}
+	nextId = 1
+	currentTrack = 0
+	currentState = StateStopped
 }

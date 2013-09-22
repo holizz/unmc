@@ -73,23 +73,28 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 	respondOK(w)
 }
 
-// func handlePlay(w http.ResponseWriter, r *http.Request) {
-// 	id, err := strconv.Atoi(r.FormValue("path"))
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		respondFail(w)
-// 		return
-// 	}
+func handlePlay(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.FormValue("path"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		respondFail(w)
+		return
+	}
 
-// 	i, err := itemIndex(id)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		respondFail(w)
-// 		return
-// 	}
+	i, err := itemIndex(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		respondFail(w)
+		return
+	}
 
-// 	audioPlay(i)
-// }
+	err = audioPlay(i)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		respondFail(w)
+		return
+	}
+}
 
 //  INITIALIZATION  //////////////////////////////////////////////////////////
 
@@ -99,11 +104,6 @@ func createMux() (m *mux.Router) {
 	m.HandleFunc("/tracks", handleList).Methods("GET")
 	m.HandleFunc("/tracks/new", handleNew).Methods("PUT")
 	m.HandleFunc("/tracks/{id}", handleDelete).Methods("DELETE")
-	// m.HandleFunc("/control/play", handlePlay).Methods("POST")
+	m.HandleFunc("/control/play", handlePlay).Methods("POST")
 	return
-}
-
-func initialize() {
-	items = []Item{}
-	next_id = 1
 }

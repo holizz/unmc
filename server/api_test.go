@@ -75,7 +75,7 @@ func TestAdd(t *testing.T) {
 	// PUT a record
 	//TODO: revert back to having the args in the body of the request
 	// record := request(t, h, "PUT", "/tracks/new", "path=/abc")
-	record := request(t, h, "PUT", "/tracks/new?path=/abc", "path=/abc")
+	record := request(t, h, "PUT", "/tracks/new?path=/abc", "")
 	assertOK(t, record)
 
 	// Check that it's there
@@ -96,12 +96,12 @@ func TestAddTwo(t *testing.T) {
 	h := createHandler()
 
 	// PUT some records
-	record := request(t, h, "PUT", "/tracks/new?path=/abc", "path=/abc")
+	record := request(t, h, "PUT", "/tracks/new?path=/abc", "")
 	assertOK(t, record)
 	err := json.Unmarshal(record.Body.Bytes(), &status)
 	id1 := status.Id
 
-	record = request(t, h, "PUT", "/tracks/new?path=/def", "path=/def")
+	record = request(t, h, "PUT", "/tracks/new?path=/def", "")
 	assertOK(t, record)
 	err = json.Unmarshal(record.Body.Bytes(), &status)
 	id2 := status.Id

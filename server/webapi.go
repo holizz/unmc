@@ -42,13 +42,6 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNew(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		respondFail(w)
-		return
-	}
-	// path := r.PostFormValue("path")
 	path := r.FormValue("path")
 
 	id := addItem(path)
@@ -74,7 +67,7 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlePlay(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.FormValue("path"))
+	id, err := strconv.Atoi(r.FormValue("id"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		respondFail(w)

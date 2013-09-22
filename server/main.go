@@ -73,30 +73,14 @@ func removeItem(id int) (err error) {
 //  HANDLE  //////////////////////////////////////////////////////////////////
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusNotImplemented)
-		respondFail(w)
-		return
-	}
 	respondOK(w)
 }
 
 func handleList(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusNotImplemented)
-		respondFail(w)
-		return
-	}
 	respond(w, "ok", items, 0)
 }
 
 func handleNew(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "PUT" {
-		w.WriteHeader(http.StatusNotImplemented)
-		respondFail(w)
-		return
-	}
-
 	err := r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -111,12 +95,6 @@ func handleNew(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "DELETE" {
-		w.WriteHeader(http.StatusNotImplemented)
-		respondFail(w)
-		return
-	}
-
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -138,10 +116,10 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 
 func createMux() (m *mux.Router) {
 	m = mux.NewRouter()
-	m.HandleFunc("/", handleRoot)
-	m.HandleFunc("/tracks", handleList)
-	m.HandleFunc("/tracks/new", handleNew)
-	m.HandleFunc("/tracks/{id}", handleDelete)
+	m.HandleFunc("/", handleRoot).Methods("GET")
+	m.HandleFunc("/tracks", handleList).Methods("GET")
+	m.HandleFunc("/tracks/new", handleNew).Methods("PUT")
+	m.HandleFunc("/tracks/{id}", handleDelete).Methods("DELETE")
 	return
 }
 

@@ -124,3 +124,43 @@ func TestAddTwo(t *testing.T) {
 		assert.Equal(t, status.List[1].Path, "/def")
 	}
 }
+
+func TestDelete(t *testing.T) {
+	var status Status
+	h := createHandler()
+
+	// It has some items already
+	items = []Item{
+		Item{
+			Id: 1,
+			Path: "/123",
+		},
+		Item{
+			Id: 2,
+			Path: "/456",
+		},
+		Item{
+			Id: 3,
+			Path: "/789",
+		},
+	}
+
+	// DELETE a record
+	record := request(t, h, "DELETE", "/tracks/2", "")
+	assertOK(t, record)
+
+	// Check that two items are still there
+	record = request(t, h, "GET", "/tracks", "")
+	assertOK(t, record)
+
+	err := json.Unmarshal(record.Body.Bytes(), &status)
+	assert.Nil(t, err)
+
+	assert.Equal(t, len(status.List), 2)
+	if len(status.List) == 2 {
+		assert.Equal(t, status.List[0].Id, 1)
+		assert.Equal(t, status.List[0].Path, "/123")
+		assert.Equal(t, status.List[1].Id, 3)
+		assert.Equal(t, status.List[1].Path, "/789")
+	}
+}

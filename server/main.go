@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 	"encoding/json"
+	"github.com/gorilla/mux"
+	"errors"
 )
 
 //  STRUCTS  /////////////////////////////////////////////////////////////////
@@ -57,6 +59,17 @@ func addItem(path string) (id int) {
 	return
 }
 
+func removeItem(id int) (err error) {
+	for i := 0; i < len(items); i++ {
+		if items[i].Id == id {
+			items = append(items[:i], items[i+1:]...)
+			return
+		}
+	}
+	err = errors.New("could not find id in item list")
+	return
+}
+
 //  HANDLE  //////////////////////////////////////////////////////////////////
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
@@ -97,13 +110,38 @@ func handleNew(w http.ResponseWriter, r *http.Request) {
 	respond(w, "ok", nil, id)
 }
 
+func handleDelete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "DELETE" {
+		w.WriteHeader(http.StatusNotImplemented)
+		respondFail(w)
+		return
+	}
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		respondFail(w)
+		return
+	}
+
+	err = removeItem(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		respondFail(w)
+		return
+	}
+	respondOK(w)
+}
+
 //  INITIALIZATION  //////////////////////////////////////////////////////////
 
-func createMux() (mux *http.ServeMux) {
-	mux = http.NewServeMux()
-	mux.HandleFunc("/", handleRoot)
-	mux.HandleFunc("/tracks", handleList)
-	mux.HandleFunc("/tracks/new", handleNew)
+func createMux() (m *mux.Router) {
+	m = mux.NewRouter()
+	m.HandleFunc("/", handleRoot)
+	m.HandleFunc("/tracks", handleList)
+	m.HandleFunc("/tracks/new", handleNew)
+	m.HandleFunc("/tracks/{id}", handleDelete)
 	return
 }
 

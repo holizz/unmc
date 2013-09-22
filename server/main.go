@@ -24,6 +24,7 @@ type Status struct {
 //  VARS  ////////////////////////////////////////////////////////////////////
 
 var items []Item
+var next_id int
 
 //  PRIVATE FUNCS  ///////////////////////////////////////////////////////////
 
@@ -50,8 +51,9 @@ func respondFail(w http.ResponseWriter) {
 }
 
 func addItem(path string) (id int) {
-	id = 1
-	items = append(items, Item{Id: id, Path: path})
+	id = next_id
+	items = append(items, Item{Id: next_id, Path: path})
+	next_id = next_id + 1
 	return
 }
 
@@ -107,6 +109,7 @@ func createMux() (mux *http.ServeMux) {
 
 func initialize() {
 	items = []Item{}
+	next_id = 1
 }
 
 //  MAIN  ////////////////////////////////////////////////////////////////////

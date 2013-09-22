@@ -90,3 +90,37 @@ func TestAdd(t *testing.T) {
 		assert.Equal(t, status.List[0].Path, "/abc")
 	}
 }
+
+func TestAddTwo(t *testing.T) {
+	var status Status
+	h := createHandler()
+
+	// PUT some records
+	record := request(t, h, "PUT", "/tracks/new?path=/abc", "path=/abc")
+	assertOK(t, record)
+	err := json.Unmarshal(record.Body.Bytes(), &status)
+	id1 := status.Id
+
+	record = request(t, h, "PUT", "/tracks/new?path=/def", "path=/def")
+	assertOK(t, record)
+	err = json.Unmarshal(record.Body.Bytes(), &status)
+	id2 := status.Id
+
+	// Check the ids are different
+	assert.NotEqual(t, id1, id2)
+
+	// Check that they're there
+	record = request(t, h, "GET", "/tracks", "")
+	assertOK(t, record)
+
+	err = json.Unmarshal(record.Body.Bytes(), &status)
+	assert.Nil(t, err)
+
+	assert.Equal(t, len(status.List), 2)
+	if len(status.List) == 2 {
+		assert.Equal(t, status.List[0].Id, id1)
+		assert.Equal(t, status.List[0].Path, "/abc")
+		assert.Equal(t, status.List[1].Id, id2)
+		assert.Equal(t, status.List[1].Path, "/def")
+	}
+}

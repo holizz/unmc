@@ -88,7 +88,8 @@ func handleNew(w http.ResponseWriter, r *http.Request) {
 		respondFail(w)
 		return
 	}
-	path := r.PostFormValue("path")
+	// path := r.PostFormValue("path")
+	path := r.FormValue("path")
 
 	id := addItem(path)
 	respond(w, "ok", nil, id)

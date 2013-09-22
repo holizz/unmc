@@ -73,7 +73,9 @@ func TestAdd(t *testing.T) {
 	h := createHandler()
 
 	// PUT a record
-	record := request(t, h, "PUT", "/tracks/new", "path=/abc")
+	//TODO: revert back to having the args in the body of the request
+	// record := request(t, h, "PUT", "/tracks/new", "path=/abc")
+	record := request(t, h, "PUT", "/tracks/new?path=/abc", "path=/abc")
 	assertOK(t, record)
 
 	// Check that it's there

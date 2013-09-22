@@ -24,9 +24,13 @@ func main() {
 
 	http.Handle("/", mux)
 
-	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	listen := fmt.Sprintf("localhost:%d", port)
+
+	fmt.Printf("Listening on %s\n", listen)
+
+	err = http.ListenAndServe(listen, nil)
 	if err != nil {
-		fmt.Printf("Could not listen on port %d\n", port)
+		fmt.Printf("Could not listen on %s\n", listen)
 		os.Exit(1)
 	}
 }

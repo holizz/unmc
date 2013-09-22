@@ -1,19 +1,17 @@
 package main
 
-import (
-	"net/http"
-	"strconv"
-	"encoding/json"
-	"github.com/gorilla/mux"
-)
+import "net/http"
+import "strconv"
+import "encoding/json"
+import "github.com/gorilla/mux"
 
 //  HELPER FUNCTIONS  ////////////////////////////////////////////////////////
 
 func respond(w http.ResponseWriter, status string, list []Item, id int) {
 	data := Status{
 		Status: status,
-		List: list,
-		Id: id,
+		List:   list,
+		Id:     id,
 	}
 	encoder := json.NewEncoder(w)
 	err := encoder.Encode(data)

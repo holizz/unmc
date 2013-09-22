@@ -1,14 +1,12 @@
 package main
 
-import (
-	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"io"
-	"strings"
-)
+import "encoding/json"
+import "github.com/stretchr/testify/assert"
+import "net/http"
+import "net/http/httptest"
+import "testing"
+import "io"
+import "strings"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -132,15 +130,15 @@ func TestDelete(t *testing.T) {
 	// It has some items already
 	items = []Item{
 		Item{
-			Id: 1,
+			Id:   1,
 			Path: "/123",
 		},
 		Item{
-			Id: 2,
+			Id:   2,
 			Path: "/456",
 		},
 		Item{
-			Id: 3,
+			Id:   3,
 			Path: "/789",
 		},
 	}

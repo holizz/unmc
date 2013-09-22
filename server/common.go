@@ -1,20 +1,18 @@
 package main
 
-import (
-	"errors"
-)
+import "errors"
 
 //  STRUCTS  /////////////////////////////////////////////////////////////////
 
 type Item struct {
-	Id int
+	Id   int
 	Path string
 }
 
 type Status struct {
 	Status string
-	List []Item
-	Id int
+	List   []Item
+	Id     int
 }
 
 const (

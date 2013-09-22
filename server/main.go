@@ -1,11 +1,9 @@
 package main
 
-import (
-	"os"
-	"fmt"
-	"net/http"
-	"strconv"
-)
+import "os"
+import "fmt"
+import "net/http"
+import "strconv"
 
 func main() {
 	if len(os.Args) != 2 {

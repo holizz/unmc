@@ -7,20 +7,11 @@ import "errors"
 
 //  API  /////////////////////////////////////////////////////////////////////
 
-// func audioInit() (err error) {
-// 	return
-// }
-
-func audioPlay(id int) (err error) {
-	i, err := itemIndex(id)
-	if err != nil {
-		return
-	}
-
-	currentTrack = i
+func audioPlay(index int) (err error) {
+	currentTrack = index
 	currentState = StatePlaying
 
-	cerr, err := C.play_file(C.CString(items[i].Path))
+	cerr, err := C.play_file(C.CString(items[currentTrack].Path))
 	if err != nil {
 		return
 	}

@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include <gst/gst.h>
 #include <glib.h>
 
@@ -81,6 +81,12 @@ static int play_file(char *path)
 
   if (!pipeline || !source || !demuxer || !decoder || !conv || !sink) {
     g_printerr ("One element could not be created. Exiting.\n");
+    printf("pipeline: %x\n", !!pipeline);
+    printf("source: %x\n", !!source);
+    printf("demuxer: %x\n", !!demuxer);
+    printf("decoder: %x\n", !!decoder);
+    printf("conv: %x\n", !!conv);
+    printf("sink: %x\n", !!sink);
     return -1;
   }
 

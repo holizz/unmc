@@ -72,14 +72,14 @@ func handlePlay(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	i, err := itemIndex(id)
+	index, err := itemIndex(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		respondFail(w)
 		return
 	}
 
-	err = audioPlay(i)
+	err = audioPlay(index)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		respondFail(w)
